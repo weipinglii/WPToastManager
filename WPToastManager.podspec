@@ -27,14 +27,17 @@ TODO: Add long description of the pod here.
   s.author           = { 'weiping.lii@icloud.com' => 'weiping.li@ximalaya.com' }
   s.source           = { :git => 'https://github.com/weiping.lii@icloud.com/WPToastManager.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
-
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '13.0'
 
   s.source_files = 'WPToastManager/Classes/**/*'
   
-  # s.resource_bundles = {
-  #   'WPToastManager' => ['WPToastManager/Assets/*.png']
-  # }
+  s.resource_bundles = {
+     'WPToastManager' => ['WPToastManager/Assets/*']
+  }
+
+  s.dependency 'Masonry'
+  s.dependency 'YYModel'
+  s.dependency 'SDWebImage'
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'

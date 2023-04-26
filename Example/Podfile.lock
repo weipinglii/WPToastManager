@@ -1,0 +1,33 @@
+PODS:
+  - Masonry (1.1.0)
+  - SDWebImage (5.15.6):
+    - SDWebImage/Core (= 5.15.6)
+  - SDWebImage/Core (5.15.6)
+  - WPToastManager (0.1.0):
+    - Masonry
+    - SDWebImage
+    - YYModel
+  - YYModel (1.0.4)
+
+DEPENDENCIES:
+  - WPToastManager (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - Masonry
+    - SDWebImage
+    - YYModel
+
+EXTERNAL SOURCES:
+  WPToastManager:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  SDWebImage: d47d81bea8a77187896b620dc79c3c528e8906b9
+  WPToastManager: ff834e091c361de617cf2009988eb34203501b9d
+  YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
+
+PODFILE CHECKSUM: fb38c9a9df11287114b14dac20aee4288fe72f8d
+
+COCOAPODS: 1.10.2

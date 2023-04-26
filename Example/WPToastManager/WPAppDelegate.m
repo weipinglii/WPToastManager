@@ -2,11 +2,12 @@
 //  WPAppDelegate.m
 //  WPToastManager
 //
-//  Created by weiping.lii@icloud.com on 04/26/2023.
+//  Created by weiping.lii@icloud.com on 04/18/2023.
 //  Copyright (c) 2023 weiping.lii@icloud.com. All rights reserved.
 //
 
 #import "WPAppDelegate.h"
+@import WPToastManager;
 
 @implementation WPAppDelegate
 
@@ -41,6 +42,16 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    WPToastMessage *message = [[WPToastMessage alloc] init];
+    message.title = @"open URL";
+    message.subtitle = url.absoluteString;
+    message.type = @"debug2";
+    message.imageURL = [NSURL URLWithString:@"https://bpic.588ku.com/element_origin_min_pic/00/92/57/9856f2293341d6f.jpg"];
+    [WPToastCenter.shared pushMessage:message];
+    return YES;
 }
 
 @end

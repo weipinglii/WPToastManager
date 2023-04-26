@@ -12,8 +12,6 @@
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F598195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
 		6003F59A195388D20070C39A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
-		6003F59E195388D20070C39A /* WPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* WPAppDelegate.m */; };
-		6003F5A7195388D20070C39A /* WPViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* WPViewController.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
 		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -24,6 +22,12 @@
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		9F4102688462D7983C21E218 /* Pods_WPToastManager_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB2E78637E4D0FD8C97F3B34 /* Pods_WPToastManager_Tests.framework */; };
 		A0085F349E627C94D87C3B38 /* Pods_WPToastManager_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 812F0AD552F6491E0115EA15 /* Pods_WPToastManager_Example.framework */; };
+		F89EA7F129F9753D005F053F /* WPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F89EA7EF29F9753D005F053F /* WPAppDelegate.m */; };
+		F89EA7F829F97563005F053F /* EditCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89EA7F329F97563005F053F /* EditCell.swift */; };
+		F89EA7F929F97563005F053F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89EA7F429F97563005F053F /* ViewController.swift */; };
+		F89EA7FA29F97563005F053F /* EditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89EA7F529F97563005F053F /* EditViewController.swift */; };
+		F89EA7FB29F97563005F053F /* DebugInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89EA7F629F97563005F053F /* DebugInfo.swift */; };
+		F89EA7FC29F97563005F053F /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89EA7F729F97563005F053F /* MessageCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,7 +44,7 @@
 		087CCAAD68831332948242D4 /* Pods-WPToastManager_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPToastManager_Tests.release.xcconfig"; path = "Target Support Files/Pods-WPToastManager_Tests/Pods-WPToastManager_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		1406CBCC08BA33300A1FEB67 /* Pods-WPToastManager_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPToastManager_Tests.debug.xcconfig"; path = "Target Support Files/Pods-WPToastManager_Tests/Pods-WPToastManager_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		347B184D6EFAAF2C574FD10B /* Pods-WPToastManager_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPToastManager_Example.debug.xcconfig"; path = "Target Support Files/Pods-WPToastManager_Example/Pods-WPToastManager_Example.debug.xcconfig"; sourceTree = "<group>"; };
-		3AA4AA7143CC85A6AD26503E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		3AA4AA7143CC85A6AD26503E /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* WPToastManager_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WPToastManager_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -49,10 +53,6 @@
 		6003F597195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F599195388D20070C39A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6003F59B195388D20070C39A /* WPToastManager-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WPToastManager-Prefix.pch"; sourceTree = "<group>"; };
-		6003F59C195388D20070C39A /* WPAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WPAppDelegate.h; sourceTree = "<group>"; };
-		6003F59D195388D20070C39A /* WPAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WPAppDelegate.m; sourceTree = "<group>"; };
-		6003F5A5195388D20070C39A /* WPViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WPViewController.h; sourceTree = "<group>"; };
-		6003F5A6195388D20070C39A /* WPViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WPViewController.m; sourceTree = "<group>"; };
 		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6003F5AE195388D20070C39A /* WPToastManager_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WPToastManager_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -60,13 +60,21 @@
 		6003F5B9195388D20070C39A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6003F5BB195388D20070C39A /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
-		6B036D9279B84CBD22C04DA9 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		6FD8ABBB9A68793D6899C671 /* WPToastManager.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = WPToastManager.podspec; path = ../WPToastManager.podspec; sourceTree = "<group>"; };
+		6B036D9279B84CBD22C04DA9 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		6FD8ABBB9A68793D6899C671 /* WPToastManager.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = WPToastManager.podspec; path = ../WPToastManager.podspec; sourceTree = "<group>"; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		812F0AD552F6491E0115EA15 /* Pods_WPToastManager_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WPToastManager_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DB2E78637E4D0FD8C97F3B34 /* Pods_WPToastManager_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WPToastManager_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5D801991CD1D98F98BA4B5C /* Pods-WPToastManager_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WPToastManager_Example.release.xcconfig"; path = "Target Support Files/Pods-WPToastManager_Example/Pods-WPToastManager_Example.release.xcconfig"; sourceTree = "<group>"; };
+		F89EA7EF29F9753D005F053F /* WPAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WPAppDelegate.m; sourceTree = "<group>"; };
+		F89EA7F029F9753D005F053F /* WPAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPAppDelegate.h; sourceTree = "<group>"; };
+		F89EA7F229F97562005F053F /* WPToastManager_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WPToastManager_Example-Bridging-Header.h"; sourceTree = "<group>"; };
+		F89EA7F329F97563005F053F /* EditCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditCell.swift; sourceTree = "<group>"; };
+		F89EA7F429F97563005F053F /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F89EA7F529F97563005F053F /* EditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditViewController.swift; sourceTree = "<group>"; };
+		F89EA7F629F97563005F053F /* DebugInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugInfo.swift; sourceTree = "<group>"; };
+		F89EA7F729F97563005F053F /* MessageCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,7 +111,6 @@
 				1406CBCC08BA33300A1FEB67 /* Pods-WPToastManager_Tests.debug.xcconfig */,
 				087CCAAD68831332948242D4 /* Pods-WPToastManager_Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -144,14 +151,18 @@
 		6003F593195388D20070C39A /* Example for WPToastManager */ = {
 			isa = PBXGroup;
 			children = (
-				6003F59C195388D20070C39A /* WPAppDelegate.h */,
-				6003F59D195388D20070C39A /* WPAppDelegate.m */,
+				F89EA7F029F9753D005F053F /* WPAppDelegate.h */,
+				F89EA7EF29F9753D005F053F /* WPAppDelegate.m */,
+				F89EA7F629F97563005F053F /* DebugInfo.swift */,
+				F89EA7F329F97563005F053F /* EditCell.swift */,
+				F89EA7F529F97563005F053F /* EditViewController.swift */,
+				F89EA7F729F97563005F053F /* MessageCell.swift */,
+				F89EA7F429F97563005F053F /* ViewController.swift */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
-				6003F5A5195388D20070C39A /* WPViewController.h */,
-				6003F5A6195388D20070C39A /* WPViewController.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
+				F89EA7F229F97562005F053F /* WPToastManager_Example-Bridging-Header.h */,
 			);
 			name = "Example for WPToastManager";
 			path = WPToastManager;
@@ -248,6 +259,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "weiping.lii@icloud.com";
 				TargetAttributes = {
+					6003F589195388D20070C39A = {
+						LastSwiftMigration = 1420;
+					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -258,6 +272,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -346,11 +361,17 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WPToastManager_Example/Pods-WPToastManager_Example-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/WPToastManager/WPToastManager.framework",
+				"${BUILT_PRODUCTS_DIR}/YYModel/YYModel.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WPToastManager.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YYModel.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -364,9 +385,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6003F59E195388D20070C39A /* WPAppDelegate.m in Sources */,
-				6003F5A7195388D20070C39A /* WPViewController.m in Sources */,
+				F89EA7F929F97563005F053F /* ViewController.swift in Sources */,
+				F89EA7FC29F97563005F053F /* MessageCell.swift in Sources */,
+				F89EA7FB29F97563005F053F /* DebugInfo.swift in Sources */,
+				F89EA7F129F9753D005F053F /* WPAppDelegate.m in Sources */,
+				F89EA7FA29F97563005F053F /* EditViewController.swift in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
+				F89EA7F829F97563005F053F /* EditCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -494,12 +519,17 @@
 			baseConfigurationReference = 347B184D6EFAAF2C574FD10B /* Pods-WPToastManager_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WPToastManager/WPToastManager-Prefix.pch";
 				INFOPLIST_FILE = "WPToastManager/WPToastManager-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "WPToastManager/WPToastManager_Example-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -510,12 +540,16 @@
 			baseConfigurationReference = F5D801991CD1D98F98BA4B5C /* Pods-WPToastManager_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WPToastManager/WPToastManager-Prefix.pch";
 				INFOPLIST_FILE = "WPToastManager/WPToastManager-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "WPToastManager/WPToastManager_Example-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
 			};
@@ -525,6 +559,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1406CBCC08BA33300A1FEB67 /* Pods-WPToastManager_Tests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
@@ -550,6 +585,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 087CCAAD68831332948242D4 /* Pods-WPToastManager_Tests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
