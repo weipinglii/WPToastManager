@@ -38,6 +38,10 @@ TODO: Add long description of the pod here.
   s.dependency 'Masonry'
   s.dependency 'YYModel'
   s.dependency 'SDWebImage'
+  s.test_spec 'Tests' do |test_spec|
+      test_spec.source_files = 'Tests/*.{h,m}'
+#      test_spec.dependency 'OCMock' # This dependency will only be linked with your tests.
+  end
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'

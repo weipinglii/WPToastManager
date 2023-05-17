@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "WPToastControlInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,6 +30,13 @@ typedef BOOL (^WPToastshouldDisplayCallack)(id messageObj);
 - (WPToastLifeCycleCallback _Nullable)lifeCycleCallback;
 - (NSTimeInterval)displayTime;
 
+- (void)setControlInfo:(WPToastControlInfo *)controlInfo;
+- (WPToastControlInfo *)controlInfo;
+
+/// compare priority, used to sort message in WPToastCenter
+/// - Parameter message: other message
+- (NSComparisonResult)compare:(id<WPToastMessage>)message;
+
 @optional;
 
 - (WPToastshouldDisplayCallack _Nullable)shouldDisplayCallback;
@@ -51,6 +59,9 @@ typedef BOOL (^WPToastshouldDisplayCallack)(id messageObj);
 @property (nonatomic, copy, nullable) WPToastLifeCycleCallback lifeCycleCallback;
 /// 显示时长 3 second by default
 @property (nonatomic, assign) NSTimeInterval displayTime;
+
+@property (nonatomic, strong) WPToastControlInfo *controlInfo;
+
 /// 在即将显示前调用，返回 YES 展示， NO 忽略这条数据
 @property (nonatomic, copy, nullable) WPToastshouldDisplayCallack shouldDisplayCallback;
 /// 消息类型 (业务类型，对应到具体的频控规则)

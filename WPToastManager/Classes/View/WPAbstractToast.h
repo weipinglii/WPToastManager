@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WPAbstractToast : UIView
 /// 数据模型
 @property (nonatomic, readonly) id<WPToastMessage> message;
-/// 存粹为了埋点需要
-@property (nonatomic, strong, nullable) WPToastControlInfo *controlInfo;
 /// 滑动手势
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 /// 点击手势

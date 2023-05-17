@@ -32,4 +32,22 @@
     return [self yy_modelDescription];
 }
 
+- (NSUInteger)hash {
+    return [self yy_modelHash];
+}
+
+- (BOOL)isEqual:(id)object {
+    return [self yy_modelIsEqual:object];
+}
+
+- (NSComparisonResult)compare:(id<WPToastMessage>)message {
+    if (self.controlInfo.priority > message.controlInfo.priority) {
+        return NSOrderedAscending;
+    } else if (self.controlInfo.priority == message.controlInfo.priority) {
+        return NSOrderedSame;
+    } else {
+        return NSOrderedDescending;
+    }
+}
+
 @end

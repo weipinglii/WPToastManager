@@ -9,6 +9,7 @@
 #import "WPAbstractToast.h"
 #import <objc/runtime.h>
 #import "WPToastWindow.h"
+#import "NSMutableArray+wpUtil.h"
 
 @interface WPToastCenter () <WPToastWindowDelegate>
 
@@ -22,7 +23,6 @@
 
 @end
 
-char kFrequencyControlInfoKey;
 static NSString *kControlInfoCacheVersionKey = @"version";
 static NSString *kControlInfoCacheDataKey = @"data";
 static NSString *kControlInfoCacheFileName = @"control_info.dat";
@@ -69,8 +69,9 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
             self.timer = nil;
         }
         
-        if ([self.messageQueue containsObject:message]) {
-            [self.messageQueue removeObject:message];
+        NSInteger index = [self.messageQueue indexOfObject:message];
+        if (index != NSNotFound) {
+            [self.messageQueue wp_heapPopByIndex:index];
             //  生命周期回调
             [self p_callbackForMessage:message event:WPToastMessageDiscarded eventDesc:@"removed by external api"];
         }
@@ -185,7 +186,7 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
     
     if (check) {
         //  进入队列
-        [self.messageQueue addObject:message];
+        [self.messageQueue wp_heapPush:message];
         //  生命周期回调
         [self p_callbackForMessage:message event:WPToastMessageQueued eventDesc:@"did enter message queue"];
         
@@ -194,26 +195,17 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
 }
 
 - (id<WPToastMessage>)p_findNextToastMessage {
-    id<WPToastMessage> nextMessage = [self.messageQueue firstObject];
+    id<WPToastMessage> nextMessage = [self.messageQueue wp_heapPopFirst];
     if (nextMessage == nil) {
         //  当前队列已全部弹出
         return nextMessage;
     }
-    WPToastControlInfo *nextControlInfo = [self p_getBindedControlInfoForMessage:nextMessage];
-    for (id<WPToastMessage> message in self.messageQueue) {
-        WPToastControlInfo *controlInfo = [self p_getBindedControlInfoForMessage:message];
-        if (controlInfo.priority > nextControlInfo.priority) {
-            nextMessage = message;
-            nextControlInfo = controlInfo;
-        }
-    }
     
     //  确认过期时间 - 用时间戳判断避免代码执行本身的耗时导致消息过期和一些边界情况
-    NSTimeInterval ts1 = [nextControlInfo.expirationDate timeIntervalSince1970];
-    NSTimeInterval ts2 = [self.lastFireDate timeIntervalSince1970] + nextControlInfo.interval;
+    NSTimeInterval ts1 = [nextMessage.controlInfo.expirationDate timeIntervalSince1970];
+    NSTimeInterval ts2 = [self.lastFireDate timeIntervalSince1970] + nextMessage.controlInfo.interval;
     BOOL valid = ABS(ts1 - ts2) < 0.1 || ts1 > ts2;
     if (!valid) {
-        [self.messageQueue removeObject:nextMessage];
         //  生命周期回调
         [self p_callbackForMessage:nextMessage event:WPToastMessageExpired eventDesc:@"message expired"];
         return [self p_findNextToastMessage];
@@ -236,14 +228,12 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
         return;
     }
     
-    WPToastControlInfo *controlInfo = [self p_getBindedControlInfoForMessage:nextMessage];
     NSDate *fireDate = nil;
-    NSTimeInterval interval = controlInfo.interval;
+    NSTimeInterval interval = nextMessage.controlInfo.interval;
     if (self.currentToastMesage) {
-        WPToastControlInfo *currentControlInfo = [self p_getBindedControlInfoForMessage:self.currentToastMesage];
         //  如果新消息的优先级低于正在展示的消息，那么在当前消息展示结束之后才展示新消息
-        if (controlInfo.priority < currentControlInfo.priority) {
-            interval = MAX(controlInfo.interval, self.currentToastMesage.displayTime + 1);
+        if (nextMessage.controlInfo.priority < self.currentToastMesage.controlInfo.priority) {
+            interval = MAX(nextMessage.controlInfo.interval, self.currentToastMesage.displayTime + 1);
         }
     }
     fireDate = [self.lastFireDate dateByAddingTimeInterval:interval];
@@ -284,7 +274,6 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
             //  忽略这条消息，并尝试展示下一条消息
             //  生命周期回调
             [self p_callbackForMessage:message event:WPToastMessageDiscarded eventDesc:@"discarded caused by shouldDisplayCallback"];
-            [self.messageQueue removeObject:message];
             [self p_updateTimerForNextToast];
             return;
         }
@@ -322,7 +311,6 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
     }
     //  绑定数据
     [toast bindViewModel:message];
-    toast.controlInfo = [self p_getBindedControlInfoForMessage:message];
     toast.windowCallback = ^(WPAbstractToast *toast) {
         if (toast.window) {
             //  展示
@@ -339,7 +327,6 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
     
     //  移出队列
     self.currentToast = toast;
-    [self.messageQueue removeObject:message];
     
     //  为下一个消息更新timer
     [self p_updateTimerForNextToast];
@@ -424,15 +411,8 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
     }
     controlInfo = [controlInfo copy];
     controlInfo.receiveAt = [NSDate date];
-    objc_setAssociatedObject(message, &kFrequencyControlInfoKey, controlInfo, OBJC_ASSOCIATION_RETAIN);
+    message.controlInfo = controlInfo;
     return YES;
-}
-
-- (WPToastControlInfo *)p_getBindedControlInfoForMessage:(id<WPToastMessage>)message {
-    NSParameterAssert(message != nil);
-    WPToastControlInfo *controlInfo = objc_getAssociatedObject(message, &kFrequencyControlInfoKey);
-    NSAssert(controlInfo != nil, @"control info should be binded before message is binded in -[WPToastManager pushMessage:]");
-    return controlInfo;
 }
 
 #pragma mark - Notifications
@@ -447,8 +427,7 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
     if (self.timer.isValid) {
         id<WPToastMessage> message = self.timer.userInfo;
         NSDate *date1 = [NSDate dateWithTimeIntervalSinceNow:3];
-        WPToastControlInfo *controlInfo = [self p_getBindedControlInfoForMessage:message];
-        NSDate *date2 = [NSDate dateWithTimeInterval:controlInfo.interval sinceDate:self.lastFireDate];
+        NSDate *date2 = [NSDate dateWithTimeInterval:message.controlInfo.interval sinceDate:self.lastFireDate];
         self.timer.fireDate = ([date1 compare:date2] == NSOrderedDescending) ? date1 : date2;
         //  最早在进入前台3秒后再弹出
     }

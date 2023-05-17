@@ -1,9 +1,13 @@
 PODS:
   - Masonry (1.1.0)
-  - SDWebImage (5.15.6):
-    - SDWebImage/Core (= 5.15.6)
-  - SDWebImage/Core (5.15.6)
+  - SDWebImage (5.15.8):
+    - SDWebImage/Core (= 5.15.8)
+  - SDWebImage/Core (5.15.8)
   - WPToastManager (0.1.0):
+    - Masonry
+    - SDWebImage
+    - YYModel
+  - WPToastManager/Tests (0.1.0):
     - Masonry
     - SDWebImage
     - YYModel
@@ -11,6 +15,7 @@ PODS:
 
 DEPENDENCIES:
   - WPToastManager (from `../`)
+  - WPToastManager/Tests (from `../`)
 
 SPEC REPOS:
   trunk:
@@ -24,10 +29,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  SDWebImage: d47d81bea8a77187896b620dc79c3c528e8906b9
-  WPToastManager: ff834e091c361de617cf2009988eb34203501b9d
+  SDWebImage: cb032eba469c54e0000e78bcb0a13cdde0a52798
+  WPToastManager: bb5f0ff622dc6107a445b837d3f0dd01f67d5e96
   YYModel: 2a7fdd96aaa4b86a824e26d0c517de8928c04b30
 
-PODFILE CHECKSUM: fb38c9a9df11287114b14dac20aee4288fe72f8d
+PODFILE CHECKSUM: 071f1c19a48af21a440a024c4edb5847de167f3c
 
 COCOAPODS: 1.10.2

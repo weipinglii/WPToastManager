@@ -3,11 +3,10 @@ use_frameworks!
 platform :ios, '13.0'
 
 target 'WPToastManager_Example' do
-  pod 'WPToastManager', :path => '../'
+  pod 'WPToastManager', :path => '../', :testspecs => ['Tests']
 
   target 'WPToastManager_Tests' do
     inherit! :search_paths
-
     
   end
 end
