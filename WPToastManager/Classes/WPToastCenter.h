@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)loadControlInfo:(NSArray<WPToastControlInfo *> *)controlInfo;
 
 /// 当前的toast对象
-- (id<WPToastMessage>)currentToastMesage;
+- (id<WPToastMessage> _Nullable)currentToastMesage;
 
 /// 根据业务类型获取频控信息
 /// @param type 业务类型

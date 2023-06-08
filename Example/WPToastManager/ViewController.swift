@@ -26,8 +26,12 @@ import WPToastManager
         let btn2 = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onAddBtnTapped(_:)))
         navigationItem.setRightBarButtonItems([btn2, btn1], animated: true)
         collectionView.register(MessageCell.self, forCellWithReuseIdentifier: "cell")
-        messages.append(DebugInfo())
-        
+        WPToastCenter.shared.delegate = self;
+        loadPresetDebugInfo()
+    }
+    
+    func loadPresetDebugInfo() {
+        //  MARK: - control info
         let info = WPToastControlInfo()
         info.type = "debug"
         info.interval = 3
@@ -47,7 +51,18 @@ import WPToastManager
         info2.priority = 20
         
         WPToastCenter.shared.loadControlInfo([info, info1, info2])
-        WPToastCenter.shared.delegate = self;
+        
+        //  MARK: - preset toast
+        let type1 = DebugInfo()
+        messages.append(type1)
+        
+        let type2 = DebugInfo()
+        type2.type = "debug1"
+        messages.append(type2)
+        
+        let type3 = DebugInfo()
+        type3.type = "debug2"
+        messages.append(type3)
     }
     
     static var count: Int = 0

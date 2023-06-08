@@ -20,6 +20,7 @@
 /// 上个 toast 显示时间
 @property (nonatomic, strong) NSDate *lastFireDate;
 @property (nonatomic, copy) NSDictionary<NSString *, WPToastControlInfo *> *frequencyControlInfo;
+@property (nonatomic, strong) dispatch_queue_t privateQueue;
 
 @end
 
@@ -29,28 +30,42 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
 
 @implementation WPToastCenter
 
+static char key = 'c';
+
 + (instancetype)shared {
     static WPToastCenter * _manager = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _manager = [[self alloc] init];
-        _manager.lastFireDate = [NSDate dateWithTimeIntervalSinceNow:NSIntegerMin];
+        _manager.lastFireDate = [NSDate dateWithTimeIntervalSinceReferenceDate:0];
         [[NSNotificationCenter defaultCenter] addObserver:_manager selector:@selector(onApplicationWillResignActive) name:UIApplicationWillResignActiveNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:_manager selector:@selector(onApplicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
         _manager.acceptUnknownMessageType = YES;
+        _manager.privateQueue = dispatch_queue_create("com.wp.toastcenter", DISPATCH_QUEUE_SERIAL);
+        CFStringRef value = CFSTR("toastcenter");
+        dispatch_queue_set_specific(_manager.privateQueue, &key, (void *)value, (dispatch_function_t)CFRelease);
         [_manager p_loadCachedFrequencyControlInfo];
     });
     return _manager;
 }
 
+void p_safe_dispatch_sync(dispatch_queue_t queue, dispatch_block_t block) {
+    CFStringRef value = dispatch_get_specific(&key);
+    if (value) {
+        block();
+    } else {
+        dispatch_sync(queue, block);
+    }
+}
+
 - (void)pushMessage:(id<WPToastMessage>)message {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(self.privateQueue, ^{
         [self p_pushMessage:message];
     });
 }
 
 - (void)removeCurrentMessage {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(self.privateQueue, ^{
         if (self.currentToast != nil) {
             [self.currentToast dismiss];
         }
@@ -59,7 +74,7 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
 
 - (void)removeMessage:(id<WPToastMessage>)message {
     if (message == nil) return;
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(self.privateQueue, ^{
         if ([self.currentToast.message isEqual:message]) {
             [self.currentToast dismiss];
         }
@@ -81,14 +96,22 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
 }
 
 - (id<WPToastMessage>)currentToastMesage {
-    return self.currentToast.message;
+    __block id<WPToastMessage> message = nil;
+    p_safe_dispatch_sync(self.privateQueue, ^{
+        message = self.currentToast.message;
+    });
+    return message;
 }
 
 - (WPToastControlInfo *)controlInfoForMessageType:(NSString *)type {
-    if (type == nil) {
-        return nil;
-    }
-    return self.frequencyControlInfo[type];
+    __block WPToastControlInfo *info = nil;
+    p_safe_dispatch_sync(self.privateQueue, ^{
+        if (type == nil) {
+            info =  nil;
+        }
+        info = self.frequencyControlInfo[type];
+    });
+    return info;
 }
 
 - (void)loadControlInfo:(NSArray<WPToastControlInfo *> *)controlInfo {
@@ -99,7 +122,7 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
             dict[obj.type] = obj;
         }
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(self.privateQueue, ^{
         self.frequencyControlInfo = [dict copy];
         [self p_cacheControlInfo];
     });
@@ -107,7 +130,7 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
 
 #pragma mark - Private
 
-- (BOOL)validateMessage:(id<WPToastMessage>)message {
+- (BOOL)p_validateMessage:(id<WPToastMessage>)message {
     
     BOOL check = NO;
     
@@ -174,7 +197,7 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
             break;
         }
         
-        if (![self validateMessage:message]) {
+        if (![self p_validateMessage:message]) {
             //  数据校验
             check = NO;
             //  生命周期回调
@@ -261,7 +284,9 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
 
 - (void)onTimerFired:(NSTimer *)timer {
     id<WPToastMessage>message = timer.userInfo;
-    [self p_popMessage:message];
+    dispatch_async(self.privateQueue, ^{
+        [self p_popMessage:message];
+    });
 }
 
 - (void)p_popMessage:(id<WPToastMessage>)message {
@@ -269,7 +294,10 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
     if ([message respondsToSelector:@selector(shouldDisplayCallback)] &&
         message.shouldDisplayCallback != nil)
     {
-        BOOL display = message.shouldDisplayCallback(message);
+        __block BOOL display = YES;
+        p_safe_dispatch_sync(dispatch_get_main_queue(), ^{
+            display = message.shouldDisplayCallback(message);
+        });
         if (display == NO) {
             //  忽略这条消息，并尝试展示下一条消息
             //  生命周期回调
@@ -282,54 +310,56 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
     self.lastFireDate = [NSDate date];
 
     //  有消息正在显示的处理逻辑
-    if (self.currentToast != nil && self.currentToast.window) {
-        self.currentToast.windowCallback = ^(WPAbstractToast *toast) {
+    WPAbstractToast *currentToast = self.currentToast;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (currentToast != nil && currentToast.window) {
+            self.currentToast.windowCallback = ^(WPAbstractToast *toast) {
+                if (toast.window) {
+                    //  生命周期回调
+                    [self p_callbackForMessage:toast.message event:WPToastMessageDisplayed eventDesc:@"toast displayed"];
+                } else {
+                    //  消失
+                    [self p_callbackForMessage:toast.message event:WPToastMessageDismissed eventDesc:@"toast dismissed by new arrival"];
+                }
+            };
+            [self.currentToast dismiss];
+        }
+        WPAbstractToast *toast = nil;
+        
+        Class toastClass = nil;
+        if ([message respondsToSelector:@selector(customToastClass)]) {
+            toastClass = message.customToastClass;
+        }
+        if (toastClass == nil) {
+            toast = [WPAbstractToast toastForMessage:message];
+        } else {
+            NSAssert([toastClass isSubclassOfClass:[WPAbstractToast class]], @"invalid custom toast class");
+            toast = [[toastClass alloc] init];
+        }
+        //  绑定数据
+        [toast bindViewModel:message];
+        toast.windowCallback = ^(WPAbstractToast *toast) {
             if (toast.window) {
+                //  展示
                 //  生命周期回调
-                [self p_callbackForMessage:message event:WPToastMessageDisplayed eventDesc:@"toast displayed"];
+                [self p_callbackForMessage:toast.message event:WPToastMessageDisplayed eventDesc:@"toast displayed"];
             } else {
                 //  消失
-                [self p_callbackForMessage:message event:WPToastMessageDismissed eventDesc:@"toast dismissed by new arrival"];
+                [self p_callbackForMessage:toast.message event:WPToastMessageDismissed eventDesc:@"toast dismissed when display time ended"];
+                self.window.hidden = YES;
             }
         };
-        [self.currentToast dismiss];
-    }
-    
-    //  创建toast
-    WPAbstractToast *toast = nil;
-    
-    Class toastClass = nil;
-    if ([message respondsToSelector:@selector(customToastClass)]) {
-        toastClass = message.customToastClass;
-    }
-    
-    if (toastClass == nil) {
-        toast = [WPAbstractToast toastForMessage:message];
-    } else {
-        NSAssert([toastClass isSubclassOfClass:[WPAbstractToast class]], @"invalid custom toast class");
-        toast = [[toastClass alloc] init];
-    }
-    //  绑定数据
-    [toast bindViewModel:message];
-    toast.windowCallback = ^(WPAbstractToast *toast) {
-        if (toast.window) {
-            //  展示
-            //  生命周期回调
-            [self p_callbackForMessage:message event:WPToastMessageDisplayed eventDesc:@"toast displayed"];
-        } else {
-            //  消失
-            [self p_callbackForMessage:message event:WPToastMessageDismissed eventDesc:@"toast dismissed when display time ended"];
-            self.window.hidden = YES;
-        }
-    };
-    self.window.hidden = NO;
-    [toast showInView:self.window.rootViewController.view];
-    
-    //  移出队列
-    self.currentToast = toast;
-    
-    //  为下一个消息更新timer
-    [self p_updateTimerForNextToast];
+        self.window.hidden = NO;
+        [toast showInView:self.window.rootViewController.view];
+        
+        dispatch_async(self.privateQueue, ^{
+            //  移出队列
+            self.currentToast = toast;
+            
+            //  为下一个消息更新timer
+            [self p_updateTimerForNextToast];
+        });
+    });
 }
 
 - (void)p_loadCachedFrequencyControlInfo {
@@ -368,7 +398,8 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
             dict[obj.type] = obj;
         }
     }
-    dispatch_async(dispatch_get_main_queue(), ^{
+    
+    p_safe_dispatch_sync(self.privateQueue, ^{
         self.frequencyControlInfo = [dict copy];
     });
 }
@@ -418,40 +449,48 @@ static NSString *kControlInfoCacheFileName = @"control_info.dat";
 #pragma mark - Notifications
 
 - (void)onApplicationWillResignActive {
-    if (self.timer.isValid) {
-        self.timer.fireDate = [NSDate distantFuture];
-    }
+    dispatch_async(self.privateQueue, ^{
+        if (self.timer.isValid) {
+            self.timer.fireDate = [NSDate distantFuture];
+        }
+    });
 }
 
 - (void)onApplicationDidBecomeActive {
-    if (self.timer.isValid) {
-        id<WPToastMessage> message = self.timer.userInfo;
-        NSDate *date1 = [NSDate dateWithTimeIntervalSinceNow:3];
-        NSDate *date2 = [NSDate dateWithTimeInterval:message.controlInfo.interval sinceDate:self.lastFireDate];
-        self.timer.fireDate = ([date1 compare:date2] == NSOrderedDescending) ? date1 : date2;
-        //  最早在进入前台3秒后再弹出
-    }
+    dispatch_async(self.privateQueue, ^{
+        if (self.timer.isValid) {
+            id<WPToastMessage> message = self.timer.userInfo;
+            NSDate *date1 = [NSDate dateWithTimeIntervalSinceNow:3];
+            NSDate *date2 = [NSDate dateWithTimeInterval:message.controlInfo.interval sinceDate:self.lastFireDate];
+            self.timer.fireDate = ([date1 compare:date2] == NSOrderedDescending) ? date1 : date2;
+            //  最早在进入前台3秒后再弹出
+        }
+    });
 }
 
 - (void)p_callbackForMessage:(id<WPToastMessage>)message
                       event:(WPToastMessageLifeCycle)event
                    eventDesc:(NSString *_Nullable)eventDesc
 {
-    if ([self.delegate respondsToSelector:@selector(toastCenter:callbackForMessage:lifeCycleEvent:eventDesc:)]) {
-        [self.delegate toastCenter:self callbackForMessage:message lifeCycleEvent:event eventDesc:eventDesc];
-    }
-    if (message.lifeCycleCallback) {
-        message.lifeCycleCallback(message, event);
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(toastCenter:callbackForMessage:lifeCycleEvent:eventDesc:)]) {
+            [self.delegate toastCenter:self callbackForMessage:message lifeCycleEvent:event eventDesc:eventDesc];
+        }
+        if (message.lifeCycleCallback) {
+            message.lifeCycleCallback(message, event);
+        }
+    });
 }
 
 #pragma mark - WPToastWindowDelegate
 
 - (BOOL)toastWindow:(WPToastWindow *)window shouldHandleTouchAtLocation:(CGPoint)location {
-    if (self.currentToast == nil || self.currentToast.window == nil) {
-        return NO;
-    }
-    CGRect rect = [self.currentToast convertRect:self.currentToast.bounds toView:window];
+    __block WPAbstractToast *toast = nil;
+    p_safe_dispatch_sync(self.privateQueue, ^{
+        toast = self.currentToast;
+    });
+    if (toast == nil || toast.window == nil) return NO;
+    CGRect rect = [toast convertRect:toast.bounds toView:window];
     return CGRectContainsPoint(rect, location);
 }
 
